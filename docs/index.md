@@ -51,29 +51,25 @@ This guide walks you through deploying OpenClaw on a fresh Ubuntu 24.04 VPS with
 The full deployment follows these ten steps in order:
 
 ```mermaid
-block-beta
-    columns 3
-
-    block:foundation["VPS Foundation"]:3
-        A["1. VPS Provisioning"]
-        B["2. Firewall (UFW)"]
-        C["3. Node.js + Deps"]
-        D["4. Install OpenClaw"]
+flowchart TD
+    subgraph foundation["VPS Foundation"]
+        A["1. VPS Provisioning"] --> B["2. Firewall · UFW"]
+        B --> C["3. Node.js + Deps"]
+        C --> D["4. Install OpenClaw"]
     end
 
-    block:security["Cloudflare Security"]:3
-        E["5. Cloudflare Tunnel"]
-        F["6. Zero Trust Access"]
+    subgraph security["Cloudflare Security"]
+        E["5. Cloudflare Tunnel"] --> F["6. Zero Trust Access"]
     end
 
-    block:config["Agent Configuration"]:3
-        G["7. Agent Identity"]
-        H["8. Memory Search"]
-        I["9. Backup (R2)"]
-        J["10. Channels & Testing"]
+    subgraph config["Agent Configuration"]
+        G["7. Agent Identity"] --> H["8. Memory Search"]
+        H --> I["9. Backup · R2"]
+        I --> J["10. Channels + Testing"]
     end
 
-    foundation --> security --> config
+    D --> E
+    F --> G
 
     style A fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
     style B fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
@@ -85,10 +81,12 @@ block-beta
     style H fill:#dcfce7,stroke:#16a34a,color:#14532d
     style I fill:#dcfce7,stroke:#16a34a,color:#14532d
     style J fill:#dcfce7,stroke:#16a34a,color:#14532d
-    style foundation fill:none,stroke:#2563eb,color:#2563eb
-    style security fill:none,stroke:#ea580c,color:#ea580c
-    style config fill:none,stroke:#16a34a,color:#16a34a
+    style foundation fill:#eff6ff,stroke:#2563eb
+    style security fill:#fff7ed,stroke:#ea580c
+    style config fill:#f0fdf4,stroke:#16a34a
 ```
+
+**Color key:** Blue = VPS foundation | Orange = Cloudflare security | Green = Agent configuration
 
 ---
 
