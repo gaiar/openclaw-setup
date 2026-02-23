@@ -146,7 +146,7 @@ The control plane is the central coordination hub. It runs a **WebSocket RPC ser
 
 **Binding:**
 
-The gateway **must** bind to `127.0.0.1` only. It is never exposed directly to the internet. External access is provided through Cloudflare Tunnel, which establishes an outbound-only encrypted connection from the VPS to Cloudflare Edge. See the [Security section]({% link docs/security.md %}) for full details.
+The gateway **must** bind to `127.0.0.1` only. It is never exposed directly to the internet. External access is provided through Cloudflare Tunnel, which establishes an outbound-only encrypted connection from the VPS to Cloudflare Edge. See the [Security section](security.md) for full details.
 
 ```
 CLI / WebChat UI / Mobile Apps
