@@ -191,3 +191,19 @@ Configure in `~/.openclaw/openclaw.json`:
 ```
 
 Setting `"mode": "open-source"` uses the self-hosted Mem0 backend with your own Qdrant or Milvus instance, keeping all data under your control. This is suitable for enterprise deployments that need horizontal scaling or already operate a vector database cluster.
+
+---
+
+{: .note-title }
+> **Claude Code Prompt**
+>
+> Copy this into Claude Code:
+> ```
+> SSH into my VPS "openclaw" and enable hybrid memory search:
+> 1. Edit ~/.openclaw/openclaw.json and add memorySearch config:
+>    enabled: true, provider: voyage, sources: ["memory", "sessions"],
+>    indexMode: hot, minScore: 0.3, maxResults: 20
+> 2. Restart the daemon: systemctl --user restart openclaw
+> 3. Verify it restarted: systemctl --user status openclaw
+> 4. Check logs for memory indexing: journalctl --user -u openclaw --no-pager -n 20
+> ```

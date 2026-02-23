@@ -126,12 +126,16 @@ openclaw agent --message "Hello, can you hear me?"
 
 If the agent responds, the gateway and agent runtime are working correctly. Then send a message through your configured channel to verify the full path from platform to agent and back.
 
-{: .claude }
+{: .note-title }
+> **Claude Code Prompt**
+>
 > Copy this into Claude Code:
 > ```
-> I have OpenClaw running on my VPS. Help me configure a new messaging
-> channel. I want to connect [Telegram / WhatsApp / Discord / Slack].
-> Walk me through creating the bot credentials, adding them to
-> openclaw.json, and verifying the channel is working with
-> openclaw channels status --probe.
+> SSH into my VPS "openclaw" and help me connect a messaging channel.
+> I want to set up [Telegram / WhatsApp / Discord / Slack].
+> 1. Walk me through creating the bot credentials on the platform
+> 2. Add the credentials to ~/.openclaw/openclaw.json
+> 3. Restart the daemon: systemctl --user restart openclaw
+> 4. Verify with: openclaw channels status --probe
+> 5. Test with: openclaw agent --message "Hello, can you hear me?"
 > ```

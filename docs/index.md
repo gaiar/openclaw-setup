@@ -26,7 +26,7 @@ Think of it as a persistent control plane for your AI agent: it stays running on
 | GitHub Stars | 199,000+ |
 | npm Package | `openclaw` (versioning: `YYYY.M.D`) |
 | Gateway Port | `18789` (localhost only, never exposed) |
-| Min Specs | 2 vCPU, 2 GB RAM, Ubuntu 24.04 LTS |
+| Recommended Specs | 4 vCPU, 8 GB RAM, Ubuntu 24.04 LTS |
 | Repository | [github.com/openclaw/openclaw](https://github.com/openclaw/openclaw) |
 | Documentation | [docs.openclaw.ai](https://docs.openclaw.ai/) |
 
@@ -133,7 +133,7 @@ CLI / WebChat UI / Mobile Apps            Messaging Platforms
 
 Before starting, make sure you have:
 
-- A **VPS** with Ubuntu 24.04 LTS (Hetzner, DigitalOcean, or similar; 2 vCPU / 2 GB RAM minimum)
+- A **VPS** with Ubuntu 24.04 LTS (Hetzner, DigitalOcean, or similar; 4 vCPU / 8 GB RAM recommended)
 - A **domain name** with DNS managed by Cloudflare (e.g., `YOURDOMAIN.COM`)
 - A **Cloudflare account** (free tier is sufficient for Tunnels and Access)
 - An **API key** for at least one LLM provider (Anthropic, OpenAI, etc.)
@@ -147,8 +147,10 @@ Before starting, make sure you have:
 > Copy this into Claude Code to get started:
 > ```
 > I want to deploy OpenClaw on a fresh Ubuntu 24.04 VPS with
-> Cloudflare Zero Trust security. Walk me through the full setup
-> starting from VPS provisioning.
+> Cloudflare Zero Trust security. My VPS is accessible via
+> SSH as "openclaw" (configured in ~/.ssh/config).
+> SSH into "openclaw" and walk me through the full setup
+> starting from system hardening through to channel testing.
 > ```
 
 ---

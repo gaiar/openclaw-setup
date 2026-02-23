@@ -203,3 +203,22 @@ Quick reference for common troubleshooting commands:
 | `systemctl status cloudflared` | Tunnel service |
 | `sudo ufw status` | Firewall rules |
 | `journalctl --user -u openclaw -f` | Daemon logs (live) |
+
+---
+
+{: .note-title }
+> **Claude Code Prompt**
+>
+> Copy this into Claude Code:
+> ```
+> SSH into my VPS "openclaw" and run a full diagnostic:
+> 1. openclaw doctor
+> 2. openclaw status
+> 3. openclaw config (check bind address is 127.0.0.1)
+> 4. sudo ufw status
+> 5. systemctl status cloudflared
+> 6. systemctl --user status openclaw
+> 7. openclaw channels status --probe
+> 8. journalctl --user -u openclaw --no-pager -n 50
+> Report any issues found and suggest fixes.
+> ```

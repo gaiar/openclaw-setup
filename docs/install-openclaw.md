@@ -91,15 +91,19 @@ This file controls the LLM provider, memory search settings, gateway port and bi
 
 ---
 
-{: .claude }
+{: .note-title }
+> **Claude Code Prompt**
+>
 > Copy this into Claude Code:
 > ```
-> Install OpenClaw globally with npm, then run the onboarding wizard
-> with --install-daemon. Use these settings:
-> - Workspace: ~/.openclaw/workspace
-> - LLM provider: Anthropic (Claude Opus 4.6)
-> - Gateway port: 18789
-> - Gateway bind: 127.0.0.1 (NEVER 0.0.0.0)
-> - Tailscale: Off
-> After onboarding, run openclaw doctor and openclaw status to verify.
+> SSH into my VPS "openclaw" and install OpenClaw:
+> 1. Run: npm install -g openclaw@latest
+> 2. Run the onboarding wizard: openclaw onboard --install-daemon
+>    Use these settings:
+>    - Workspace: ~/.openclaw/workspace
+>    - LLM provider: Anthropic (Claude Opus 4.6)
+>    - Gateway port: 18789
+>    - Gateway bind: 127.0.0.1 (CRITICAL: never 0.0.0.0)
+>    - Tailscale: Off
+> 3. Verify with: openclaw doctor && openclaw status
 > ```

@@ -7,7 +7,7 @@ nav_order: 8
 # Claude Code Recipes
 {: .no_toc }
 
-All prompts organized by deployment phase for copy-paste into Claude Code.
+All prompts organized by deployment phase for copy-paste into Claude Code. Each recipe tells Claude Code to SSH into your VPS and perform the steps remotely.
 {: .fs-6 .fw-300 }
 
 ## Table of contents
@@ -18,192 +18,248 @@ All prompts organized by deployment phase for copy-paste into Claude Code.
 
 ---
 
-## Overview
+## Prerequisites
 
-This page compiles all Claude Code prompts for each deployment phase. Copy any prompt below directly into Claude Code to automate that step. Each recipe is self-contained and can be run independently, or you can use the all-in-one prompt at the bottom to walk through the entire deployment in a single session.
+All recipes assume you have SSH access configured in `~/.ssh/config`:
+
+```
+Host openclaw
+    HostName YOUR_VPS_IP
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+```
+
+See [SSH Key Authentication](ssh-keys.md) for setup instructions.
 
 ---
 
 ## Phase 1: VPS Provisioning & Hardening
 
-### Recipe 1 -- Initial Server Setup
-
 ```
-I just provisioned a fresh Ubuntu 24.04 VPS. Please:
-1. Update all packages
-2. Set up UFW firewall: deny all incoming, allow outgoing, allow SSH only
-3. Verify the firewall is active and port 18789 is NOT open
-4. Create a non-root user called "deploy" with sudo access
-```
-
----
-
-## Phase 2: Runtime Dependencies
-
-### Recipe 2 -- Install All Dependencies
-
-```
-Install all runtime dependencies on this Ubuntu 24.04 VPS:
-1. build-essential and libopus-dev (needed for @discordjs/opus)
-2. Node.js 22 via NVM (handle zsh compatibility if needed)
-3. cloudflared from the latest GitHub .deb release
-Verify each installation after completing it.
+SSH into my VPS "openclaw" and harden it:
+1. Update all packages (apt update && apt upgrade -y)
+2. Create a non-root user "deploy" with sudo access
+3. Set up UFW firewall: deny all incoming, allow outgoing,
+   allow SSH (port 22). Enable the firewall.
+4. Verify UFW is active and port 18789 is NOT open
+5. Show me the final firewall rules
 ```
 
 ---
 
-## Phase 3: Install OpenClaw
-
-### Recipe 3 -- Install and Configure
+## Phase 2: SSH Hardening & fail2ban
 
 ```
-Install OpenClaw globally via npm and run the onboarding wizard:
-1. npm install -g openclaw@latest
-2. Run openclaw onboard --install-daemon with these settings:
+SSH into my VPS "openclaw" and harden SSH:
+1. Verify my SSH key is in authorized_keys
+2. Disable password authentication in sshd_config:
+   PasswordAuthentication no, ChallengeResponseAuthentication no,
+   UsePAM no, PermitRootLogin prohibit-password
+3. Validate config with sshd -t, then reload SSH (not restart)
+4. Install fail2ban with an [sshd] jail:
+   maxretry=5, findtime=10m, bantime=1h
+5. Verify: fail2ban-client status sshd
+```
+
+---
+
+## Phase 3: Runtime Dependencies
+
+```
+SSH into my VPS "openclaw" and install all runtime dependencies:
+1. Install build-essential and libopus-dev
+2. Install Node.js 22 via NVM (handle zsh compatibility)
+3. Install cloudflared from the latest GitHub .deb release
+4. Verify all installations: node --version, npm --version,
+   cloudflared --version
+```
+
+---
+
+## Phase 4: Install OpenClaw
+
+```
+SSH into my VPS "openclaw" and install OpenClaw:
+1. Run: npm install -g openclaw@latest
+2. Run the onboarding wizard: openclaw onboard --install-daemon
+   Use these settings:
    - Workspace: ~/.openclaw/workspace
+   - LLM provider: Anthropic (Claude Opus 4.6)
    - Gateway port: 18789
-   - Gateway bind: 127.0.0.1 (NEVER 0.0.0.0)
+   - Gateway bind: 127.0.0.1 (CRITICAL: never 0.0.0.0)
    - Tailscale: Off
-3. Verify with openclaw doctor and openclaw status
+3. Verify with: openclaw doctor && openclaw status
 ```
 
 ---
 
-## Phase 4: Cloudflare Tunnel
-
-### Recipe 4 -- Create Tunnel
+## Phase 5: Cloudflare Tunnel
 
 ```
-Set up a Cloudflare Tunnel on this VPS:
-1. Run cloudflared tunnel login (I'll handle the browser auth)
-2. Create a tunnel named "openclaw-gateway"
+SSH into my VPS "openclaw" and set up a Cloudflare Tunnel:
+1. Run: cloudflared tunnel login (I'll handle browser auth)
+2. Create tunnel: cloudflared tunnel create openclaw-gateway
 3. Write ~/.cloudflared/config.yml with ingress rules for:
    - openclaw.YOURDOMAIN.COM → http://localhost:18789
    - ssh.YOURDOMAIN.COM → ssh://localhost:22
    - Catch-all: http_status:404
 4. Route DNS for both hostnames
-5. Install cloudflared as a systemd service and start it
-6. Verify the tunnel is running
+5. Install as systemd service, start and enable it
+6. Verify with: systemctl status cloudflared
 ```
 
 ---
 
-## Phase 5: Zero Trust Access
-
-### Recipe 5 -- Configure Access (API)
+## Phase 6: Zero Trust Access
 
 ```
-Set up Cloudflare Zero Trust Access using the API:
-- Account ID: YOUR_ACCOUNT_ID
-- API Token: YOUR_CF_API_TOKEN
-- Email to authorize: you@example.com
+Set up Cloudflare Zero Trust Access for my OpenClaw deployment.
+My Cloudflare Account ID: YOUR_ACCOUNT_ID
+My API token: YOUR_CF_API_TOKEN
+My domain: YOURDOMAIN.COM
+My email: you@example.com
 
-Create two Access applications:
-1. "OpenClaw AI Gateway" on openclaw.YOURDOMAIN.COM
-2. "SSH Access" on ssh.YOURDOMAIN.COM
-
-For each, create an Allow policy restricted to my email.
-Verify both return 302 redirects with curl -I.
+1. Create Access app "OpenClaw AI Gateway" on openclaw.YOURDOMAIN.COM
+2. Create Allow policy restricted to my email
+3. Create Access app "SSH Access" on ssh.YOURDOMAIN.COM
+4. Create Allow policy restricted to my email
+5. Verify both with: curl -I https://openclaw.YOURDOMAIN.COM
+   (should return 302 redirect to Cloudflare login)
+6. SSH into my VPS "openclaw" and verify the tunnel is routing
+   correctly: cloudflared tunnel ingress validate
 ```
 
 ---
 
-## Phase 6: Agent Identity
-
-### Recipe 6 -- Create Identity Files
+## Phase 7: Agent Identity
 
 ```
-Create the OpenClaw agent identity files in ~/.openclaw/workspace/:
-
-1. SOUL.md — Agent constitution with:
-   - Security boundary rules (no destructive commands, no exposed API keys)
-   - Tool usage rules (require human approval for emails, financial transactions, file deletions)
-   - Memory protocol (always search before asking clarifying questions)
-
-2. USER.md — Operator profile with:
+SSH into my VPS "openclaw" and create the OpenClaw identity files:
+1. Create files in ~/.openclaw/workspace/:
+   SOUL.md, USER.md, MEMORY.md, HEARTBEAT.md
+2. Populate SOUL.md with security boundaries:
+   - Never execute destructive commands
+   - Never expose API keys in logs
+   - Require human approval for emails and file deletions
+   - Always run memory_search before asking clarifying questions
+3. Populate USER.md with my preferences:
    - Language: English
-   - Timezone: America/New_York
+   - Timezone: (ask me)
    - Output format: concise
    - Risk tolerance: conservative
-
-3. MEMORY.md — Start empty, will be populated over time
-
-4. HEARTBEAT.md — Start empty (no autonomous tasks yet)
+4. Leave MEMORY.md and HEARTBEAT.md empty for now
+5. Restart the daemon: systemctl --user restart openclaw
 ```
 
 ---
 
-## Phase 7: Memory Search
-
-### Recipe 7 -- Enable Hybrid Search
+## Phase 8: Memory Search
 
 ```
-Enable hybrid memory search in OpenClaw:
+SSH into my VPS "openclaw" and enable hybrid memory search:
 1. Edit ~/.openclaw/openclaw.json and add memorySearch config:
-   - enabled: true
-   - provider: voyage
-   - sources: ["memory", "sessions"]
-   - indexMode: hot
-   - minScore: 0.3
-   - maxResults: 20
-2. Restart the OpenClaw daemon
-3. Verify the daemon restarted successfully
+   enabled: true, provider: voyage, sources: ["memory", "sessions"],
+   indexMode: hot, minScore: 0.3, maxResults: 20
+2. Restart the daemon: systemctl --user restart openclaw
+3. Verify it restarted: systemctl --user status openclaw
+4. Check logs for memory indexing:
+   journalctl --user -u openclaw --no-pager -n 20
 ```
 
 ---
 
-## Phase 8: Backup
-
-### Recipe 8 -- Setup R2 Backup
+## Phase 9: Backup to R2
 
 ```
-Set up automated backups of ~/.openclaw/workspace to Cloudflare R2:
+SSH into my VPS "openclaw" and set up automated backups:
 1. Install rclone
-2. Help me configure an R2 remote (I'll provide the access keys)
-3. Set up a cron job to sync every 6 hours with logging
-4. Run an initial manual sync to verify
+2. Configure an R2 remote named "r2" (I'll provide the access keys)
+3. Verify the bucket is accessible: rclone lsd r2:
+4. Set up a cron job to sync every 6 hours:
+   rclone sync ~/.openclaw/workspace r2:openclaw-backup-bucket
+   with logging to /tmp/rclone-openclaw.log
+5. Run an initial manual sync to verify it works
+6. Show me the cron entry and sync results
 ```
 
 ---
 
-## Phase 9: Post-Install
-
-### Recipe 9 -- Security & Testing
+## Phase 10: Messaging Channels
 
 ```
-Finalize the OpenClaw deployment:
-1. Install protection skills: skillguard and prompt-guard
-2. Set file permissions:
-   - chmod 600 ~/.openclaw/openclaw.json
-   - chmod 600 ~/.cloudflared/*.json
-   - chmod 700 ~/.openclaw/workspace
-3. Run the full safety checklist:
-   - openclaw doctor
-   - sudo ufw status (verify port 18789 is NOT listed)
-   - openclaw config (verify bind is 127.0.0.1)
-   - systemctl status cloudflared
-   - curl -I https://openclaw.YOURDOMAIN.COM (should get 302)
+SSH into my VPS "openclaw" and help me connect a messaging channel.
+I want to set up [Telegram / WhatsApp / Discord / Slack].
+1. Walk me through creating the bot credentials on the platform
+2. Add the credentials to ~/.openclaw/openclaw.json
+3. Restart the daemon: systemctl --user restart openclaw
+4. Verify with: openclaw channels status --probe
+5. Test with: openclaw agent --message "Hello, can you hear me?"
+```
+
+---
+
+## Phase 11: Security Audit & Hardening
+
+```
+SSH into my VPS "openclaw" and run a full security audit:
+1. Verify gateway binds to 127.0.0.1: openclaw config | grep bind
+2. Verify UFW: sudo ufw status (port 18789 must NOT appear)
+3. Verify tunnel: systemctl status cloudflared
+4. Verify Access gate: curl -I https://openclaw.YOURDOMAIN.COM
+   (should return 302)
+5. Install protection skills:
+   npx clawhub@latest install skillguard
+   npx clawhub@latest install prompt-guard
+6. Set file permissions:
+   chmod 600 ~/.openclaw/openclaw.json
+   chmod 600 ~/.cloudflared/*.json
+   chmod 700 ~/.openclaw/workspace
+7. Report back the results of each check
+```
+
+---
+
+## Full Diagnostic
+
+```
+SSH into my VPS "openclaw" and run a full diagnostic:
+1. openclaw doctor
+2. openclaw status
+3. openclaw config (check bind address is 127.0.0.1)
+4. sudo ufw status
+5. systemctl status cloudflared
+6. systemctl --user status openclaw
+7. openclaw channels status --probe
+8. journalctl --user -u openclaw --no-pager -n 50
+Report any issues found and suggest fixes.
 ```
 
 ---
 
 ## Full Deployment (All-in-One)
 
-A comprehensive single prompt that covers the entire deployment from start to finish.
+A single prompt that covers the entire deployment from start to finish.
 
 ```
-I want to deploy OpenClaw on this fresh Ubuntu 24.04 VPS with
-Cloudflare Zero Trust security. Walk me through the full setup:
+My VPS is accessible via SSH as "openclaw" (in ~/.ssh/config).
+SSH into "openclaw" and deploy OpenClaw with Cloudflare Zero Trust:
 
-1. System hardening (updates, UFW firewall)
-2. Runtime dependencies (build-essential, Node.js 22 via NVM, cloudflared)
-3. OpenClaw installation (npm install, onboard wizard with daemon)
-4. Cloudflare Tunnel (create, configure, install as service)
-5. Zero Trust Access (Access applications for gateway and SSH)
+1. System hardening (updates, UFW firewall — deny all incoming,
+   allow SSH only)
+2. Runtime dependencies (build-essential, libopus-dev, Node.js 22
+   via NVM, cloudflared)
+3. OpenClaw installation (npm install -g openclaw@latest,
+   onboard wizard with daemon, bind 127.0.0.1 port 18789)
+4. Cloudflare Tunnel (create, configure ingress, route DNS,
+   install as systemd service)
+5. Zero Trust Access (Access applications for gateway and SSH,
+   Allow policies for my email)
 6. Agent identity (SOUL.md, USER.md, MEMORY.md, HEARTBEAT.md)
-7. Hybrid memory search (Voyage provider)
+7. Hybrid memory search (Voyage provider, minScore 0.3)
 8. R2 backup (rclone cron every 6 hours)
-9. Security hardening (protection skills, file permissions, verification)
+9. Security hardening (protection skills, file permissions,
+   full verification checklist)
 
 CRITICAL: Gateway must bind to 127.0.0.1 only. Never 0.0.0.0.
 Never open port 18789 in the firewall.

@@ -209,18 +209,23 @@ To test full authentication, open `https://openclaw.YOURDOMAIN.COM` in a browser
 
 ---
 
-{: .claude }
-> Copy this into Claude Code to automate the API setup:
+{: .note-title }
+> **Claude Code Prompt**
+>
+> Copy this into Claude Code:
 > ```
-> Set up Cloudflare Access for my OpenClaw deployment using the API.
-> My Cloudflare Account ID is <ACCOUNT_ID> and my API token is
-> <CF_API_TOKEN>. My domain is <YOURDOMAIN.COM>.
+> Set up Cloudflare Zero Trust Access for my OpenClaw deployment.
+> My Cloudflare Account ID: YOUR_ACCOUNT_ID
+> My API token: YOUR_CF_API_TOKEN
+> My domain: YOURDOMAIN.COM
+> My email: you@example.com
 >
-> 1. Create a self-hosted Access application named "OpenClaw AI Gateway"
->    for subdomain openclaw.<YOURDOMAIN.COM> with 24h session duration
-> 2. Create an Allow policy for the application with my email <EMAIL>
-> 3. Repeat for an SSH application at ssh.<YOURDOMAIN.COM>
-> 4. Verify both applications by checking for a 302 redirect with curl -I
->
-> Show me the APP_IDs from each response so I can save them.
+> 1. Create Access app "OpenClaw AI Gateway" on openclaw.YOURDOMAIN.COM
+> 2. Create Allow policy restricted to my email
+> 3. Create Access app "SSH Access" on ssh.YOURDOMAIN.COM
+> 4. Create Allow policy restricted to my email
+> 5. Verify both with: curl -I https://openclaw.YOURDOMAIN.COM
+>    (should return 302 redirect to Cloudflare login)
+> 6. SSH into my VPS "openclaw" and verify the tunnel is routing
+>    correctly: cloudflared tunnel ingress validate
 > ```

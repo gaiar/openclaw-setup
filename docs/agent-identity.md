@@ -158,19 +158,24 @@ Browse the templates for inspiration, but always customize them to match your sp
 
 ---
 
-{: .claude }
+{: .note-title }
+> **Claude Code Prompt**
+>
 > Copy this into Claude Code:
 > ```
-> Create the core identity files for the OpenClaw agent:
->
-> cd ~/.openclaw/workspace
-> touch SOUL.md USER.md MEMORY.md HEARTBEAT.md
->
-> Then populate SOUL.md with security boundaries (never expose API keys,
-> never run destructive commands, require approval for emails and
-> file deletions), and USER.md with operator preferences (language,
-> timezone, output format, risk tolerance).
->
-> Leave HEARTBEAT.md empty for now — it can be populated later
-> with autonomous tasks for the heartbeat scheduler.
+> SSH into my VPS "openclaw" and create the OpenClaw identity files:
+> 1. Create files in ~/.openclaw/workspace/:
+>    SOUL.md, USER.md, MEMORY.md, HEARTBEAT.md
+> 2. Populate SOUL.md with security boundaries:
+>    - Never execute destructive commands
+>    - Never expose API keys in logs
+>    - Require human approval for emails and file deletions
+>    - Always run memory_search before asking clarifying questions
+> 3. Populate USER.md with my preferences:
+>    - Language: English
+>    - Timezone: (ask me)
+>    - Output format: concise
+>    - Risk tolerance: conservative
+> 4. Leave MEMORY.md and HEARTBEAT.md empty for now
+> 5. Restart the daemon: systemctl --user restart openclaw
 > ```

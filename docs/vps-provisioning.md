@@ -29,7 +29,7 @@ Both providers are well-suited for OpenClaw. **Hetzner** offers better value in 
 1. Log in to your provider's dashboard.
 2. Create a new server/droplet with the following settings:
    - **OS**: Ubuntu 24.04 LTS
-   - **Plan**: 2 vCPU / 2 GB RAM minimum
+   - **Plan**: 4 vCPU / 8 GB RAM recommended
    - **Region**: closest to you or your LLM provider
 3. **Add your SSH public key** during creation. This avoids password-based authentication entirely.
 4. Assign a hostname (e.g., `openclaw-vps`).
@@ -132,3 +132,19 @@ To                         Action      From
 ---
 
 Your VPS is now provisioned and hardened. Next, proceed to installing Node.js and OpenClaw.
+
+---
+
+{: .note-title }
+> **Claude Code Prompt**
+>
+> Copy this into Claude Code:
+> ```
+> SSH into my new VPS "openclaw" and harden it:
+> 1. Update all packages (apt update && apt upgrade -y)
+> 2. Create a non-root user "deploy" with sudo access
+> 3. Set up UFW firewall: deny all incoming, allow outgoing,
+>    allow SSH (port 22). Enable the firewall.
+> 4. Verify UFW is active and port 18789 is NOT open
+> 5. Show me the final firewall rules
+> ```

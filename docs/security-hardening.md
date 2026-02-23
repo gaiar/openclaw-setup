@@ -123,3 +123,26 @@ chmod 700 ~/.openclaw/workspace
 ```
 
 These permissions ensure that only the owning user can read or modify the gateway configuration, tunnel credentials, and agent workspace files.
+
+---
+
+{: .note-title }
+> **Claude Code Prompt**
+>
+> Copy this into Claude Code:
+> ```
+> SSH into my VPS "openclaw" and run a full security audit:
+> 1. Verify gateway binds to 127.0.0.1: openclaw config | grep bind
+> 2. Verify UFW: sudo ufw status (port 18789 must NOT appear)
+> 3. Verify tunnel: systemctl status cloudflared
+> 4. Verify Access gate: curl -I https://openclaw.YOURDOMAIN.COM
+>    (should return 302)
+> 5. Install protection skills:
+>    npx clawhub@latest install skillguard
+>    npx clawhub@latest install prompt-guard
+> 6. Set file permissions:
+>    chmod 600 ~/.openclaw/openclaw.json
+>    chmod 600 ~/.cloudflared/*.json
+>    chmod 700 ~/.openclaw/workspace
+> 7. Report back the results of each check
+> ```

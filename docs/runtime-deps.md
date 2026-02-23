@@ -71,9 +71,10 @@ cloudflared --version
 >
 > Copy this into Claude Code:
 > ```
-> Install all runtime dependencies on this Ubuntu 24.04 VPS:
-> 1. build-essential and libopus-dev
-> 2. Node.js 22 via NVM
-> 3. cloudflared from GitHub releases
-> Verify each installation after completing it.
+> SSH into my VPS "openclaw" and install all runtime dependencies:
+> 1. Install build-essential and libopus-dev
+> 2. Install Node.js 22 via NVM (handle zsh compatibility)
+> 3. Install cloudflared from the latest GitHub .deb release
+> 4. Verify all installations: node --version, npm --version,
+>    cloudflared --version
 > ```

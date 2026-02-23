@@ -23,7 +23,7 @@ Everything you need before starting the OpenClaw VPS deployment.
 
 Before you begin, make sure you have the following:
 
-- [ ] **VPS account** -- Hetzner or DigitalOcean recommended. The smallest tier (~$5/month) is sufficient: Ubuntu 24.04 LTS, 2 vCPU, 2 GB RAM minimum. OpenClaw is a gateway/orchestrator, not an inference engine, so resource requirements are modest.
+- [ ] **VPS account** -- Hetzner or DigitalOcean recommended. The smallest tier (~$5/month) is sufficient: Ubuntu 24.04 LTS, 4 vCPU / 8 GB RAM recommended. While OpenClaw is a gateway (not an inference engine), native dependencies, embedding indexing, and multiple channel adapters benefit from headroom.
 
 - [ ] **Domain name** -- Any registrar works (Namecheap, Porkbun, GoDaddy, etc.). You can also purchase a domain directly from [Cloudflare Registrar](https://www.cloudflare.com/products/registrar/) at cost, which simplifies DNS setup later.
 
@@ -73,3 +73,20 @@ By the end of this guide, you will have:
 - **Persistent memory** with hybrid semantic and lexical search, backed by Markdown files and SQLite vector storage.
 
 The gateway binds exclusively to `127.0.0.1:18789` and is never directly reachable from the internet. Even if the Cloudflare layer were bypassed, the port is not open in the firewall.
+
+---
+
+{: .note-title }
+> **Claude Code Prompt**
+>
+> Copy this into Claude Code:
+> ```
+> I'm preparing to deploy OpenClaw on a VPS. Help me verify
+> I have everything ready:
+> 1. Check if I can SSH into my VPS: ssh openclaw
+> 2. Verify the OS: cat /etc/os-release (should be Ubuntu 24.04)
+> 3. Check resources: free -h and nproc (need 2+ vCPU, 2+ GB RAM)
+> 4. Confirm I have a Cloudflare API token ready
+> 5. Confirm I have an LLM API key (Anthropic recommended)
+> Report what's ready and what's missing.
+> ```

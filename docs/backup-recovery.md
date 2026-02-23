@@ -213,12 +213,18 @@ All three commands should report healthy status. Your agent is fully restored.
 
 ---
 
-{: .claude }
-> Copy this into Claude Code to set up backups:
+{: .note-title }
+> **Claude Code Prompt**
+>
+> Copy this into Claude Code:
 > ```
-> Set up rclone to back up my OpenClaw workspace to Cloudflare R2.
-> Install rclone, configure an R2 remote named "r2", and create a
-> cron job that syncs ~/.openclaw/workspace to the bucket
-> "openclaw-backup-bucket" every 6 hours with logging to
-> /tmp/rclone-openclaw.log. Then run a manual sync to verify it works.
+> SSH into my VPS "openclaw" and set up automated backups:
+> 1. Install rclone
+> 2. Configure an R2 remote named "r2" (I'll provide the access keys)
+> 3. Verify the bucket is accessible: rclone lsd r2:
+> 4. Set up a cron job to sync every 6 hours:
+>    rclone sync ~/.openclaw/workspace r2:openclaw-backup-bucket
+>    with logging to /tmp/rclone-openclaw.log
+> 5. Run an initial manual sync to verify it works
+> 6. Show me the cron entry and sync results
 > ```

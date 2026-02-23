@@ -175,11 +175,19 @@ You should see:
 
 Test end-to-end connectivity by visiting `https://openclaw.YOURDOMAIN.COM` in your browser. If Cloudflare Access is configured, you will be prompted to authenticate before the request reaches the gateway.
 
-{: .claude }
-> Copy this into Claude Code to set up your Cloudflare Tunnel:
+{: .note-title }
+> **Claude Code Prompt**
+>
+> Copy this into Claude Code:
 > ```
-> I need to set up a Cloudflare Tunnel on my VPS to securely expose
-> the OpenClaw gateway at localhost:18789. My domain is managed by
-> Cloudflare. Walk me through creating the tunnel, writing the config,
-> routing DNS, and installing it as a systemd service.
+> SSH into my VPS "openclaw" and set up a Cloudflare Tunnel:
+> 1. Run: cloudflared tunnel login (I'll handle browser auth)
+> 2. Create tunnel: cloudflared tunnel create openclaw-gateway
+> 3. Write ~/.cloudflared/config.yml with ingress rules for:
+>    - openclaw.YOURDOMAIN.COM → http://localhost:18789
+>    - ssh.YOURDOMAIN.COM → ssh://localhost:22
+>    - Catch-all: http_status:404
+> 4. Route DNS for both hostnames
+> 5. Install as systemd service, start and enable it
+> 6. Verify with: systemctl status cloudflared
 > ```

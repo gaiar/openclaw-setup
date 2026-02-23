@@ -125,3 +125,20 @@ When you run `ssh user@ssh.YOURDOMAIN.COM`, `cloudflared` requests a short-lived
 | Just you, from your own machines | **Option 1** -- simplest setup, one line in SSH config |
 | Access from untrusted/borrowed devices | **Option 2** -- browser terminal, no client software |
 | Team access, audit requirements | **Option 3** -- short-lived certs, zero key management |
+
+---
+
+{: .note-title }
+> **Claude Code Prompt**
+>
+> Copy this into Claude Code:
+> ```
+> Set up SSH via Cloudflare Zero Trust for my VPS "openclaw":
+> 1. On my local machine, add to ~/.ssh/config:
+>    Host ssh.YOURDOMAIN.COM
+>      ProxyCommand cloudflared access ssh --hostname %h
+> 2. SSH into my VPS "openclaw" and verify the tunnel config
+>    has the ssh.YOURDOMAIN.COM ingress rule pointing to
+>    ssh://localhost:22
+> 3. Test the connection: ssh user@ssh.YOURDOMAIN.COM
+> ```
