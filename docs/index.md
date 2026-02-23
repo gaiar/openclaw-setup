@@ -113,31 +113,53 @@ Follow the pages in order for a complete deployment:
 
 Once deployed, your setup has two traffic paths — **all outbound from the VPS**:
 
-```
-CLI / WebChat UI / Mobile Apps            Messaging Platforms
-        |                              (Telegram, WhatsApp, Slack,
-        v                               Discord, Signal, etc.)
-  Cloudflare Access (JWT)                       ^
-        |                                       |
-        v                              outbound polling /
-  Cloudflare Tunnel                    long-lived connections
-  (encrypted, outbound-only)                    |
-        |                                       |
-        v                                       |
-  +---------------------------------------------------+
-  |  Your VPS (Ubuntu 24.04)                           |
-  |                                                    |
-  |   UFW: deny all inbound except SSH (port 22)       |
-  |                                                    |
-  |   OpenClaw Gateway · ws://127.0.0.1:18789          |
-  |   (systemd managed)                                |
-  +---------------------------------------------------+
-                        |
-                        v
-            LLM APIs (Anthropic, OpenAI, etc.)
+```mermaid
+flowchart TD
+    subgraph clients["Control Plane Clients"]
+        CLI["CLI"]
+        WEB["WebChat UI"]
+        APP["Mobile Apps"]
+    end
+
+    subgraph cf["Cloudflare Zero Trust"]
+        ACCESS["Cloudflare Access\n(JWT validation)"]
+        TUNNEL["Cloudflare Tunnel\n(encrypted, outbound-only)"]
+    end
+
+    subgraph vps["Your VPS · Ubuntu 24.04"]
+        UFW["UFW: deny all inbound\nexcept SSH"]
+        GW["OpenClaw Gateway\nws://127.0.0.1:18789\n(systemd managed)"]
+    end
+
+    subgraph channels["Messaging Platforms"]
+        TG["Telegram"]
+        WA["WhatsApp"]
+        SL["Slack"]
+        DC["Discord"]
+        SIG["Signal"]
+    end
+
+    subgraph llm["LLM APIs"]
+        ANT["Anthropic"]
+        OAI["OpenAI"]
+        OTHER["DeepSeek · Gemini\nOpenRouter"]
+    end
+
+    CLI & WEB & APP -->|"HTTPS"| ACCESS
+    ACCESS --> TUNNEL
+    TUNNEL -->|"inbound via tunnel"| GW
+
+    GW <-->|"outbound polling /\nlong-lived connections"| TG & WA & SL & DC & SIG
+    GW -->|"inference requests\n(outbound)"| ANT & OAI & OTHER
+
+    style clients fill:#f3f4f6,stroke:#6b7280
+    style cf fill:#fff7ed,stroke:#ea580c
+    style vps fill:#dbeafe,stroke:#2563eb
+    style channels fill:#f0fdf4,stroke:#16a34a
+    style llm fill:#faf5ff,stroke:#7c3aed
 ```
 
-**No inbound ports are open for messaging.** The gateway polls channel APIs outbound (Telegram long-polling, WhatsApp persistent WebSocket, etc.). Only control plane clients use the Cloudflare Tunnel path.
+**No inbound ports are open for messaging.** The gateway polls channel APIs outbound (Telegram long-polling, WhatsApp persistent WebSocket, etc.). Only control plane clients reach the gateway through the Cloudflare Tunnel path.
 
 ---
 
