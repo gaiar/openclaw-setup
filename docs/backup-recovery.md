@@ -221,10 +221,12 @@ All three commands should report healthy status. Your agent is fully restored.
 > SSH into my VPS "openclaw" and set up automated backups:
 > 1. Install rclone
 > 2. Configure an R2 remote named "r2" (I'll provide the access keys)
-> 3. Verify the bucket is accessible: rclone lsd r2:
-> 4. Set up a cron job to sync every 6 hours:
+> 3. Create the R2 bucket if it doesn't exist:
+>    rclone mkdir r2:openclaw-backup-bucket
+> 4. Verify the bucket is accessible: rclone lsd r2:
+> 5. Set up a cron job to sync every 6 hours:
 >    rclone sync ~/.openclaw/workspace r2:openclaw-backup-bucket
 >    with logging to /tmp/rclone-openclaw.log
-> 5. Run an initial manual sync to verify it works
-> 6. Show me the cron entry and sync results
+> 6. Run an initial manual sync to verify it works
+> 7. Show me the cron entry and sync results
 > ```

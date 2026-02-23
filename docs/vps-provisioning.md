@@ -140,11 +140,12 @@ Your VPS is now provisioned and hardened. Next, proceed to installing Node.js an
 >
 > Copy this into Claude Code:
 > ```
-> SSH into my new VPS "openclaw" and harden it:
+> SSH into my new VPS at root@YOUR_VPS_IP and harden it:
 > 1. Update all packages (apt update && apt upgrade -y)
 > 2. Create a non-root user "deploy" with sudo access
-> 3. Set up UFW firewall: deny all incoming, allow outgoing,
+> 3. Copy root's SSH authorized_keys to the deploy user
+> 4. Set up UFW firewall: deny all incoming, allow outgoing,
 >    allow SSH (port 22). Enable the firewall.
-> 4. Verify UFW is active and port 18789 is NOT open
-> 5. Show me the final firewall rules
+> 5. Verify UFW is active and port 18789 is NOT open
+> 6. Show me the final firewall rules
 > ```

@@ -200,10 +200,13 @@ Setting `"mode": "open-source"` uses the self-hosted Mem0 backend with your own 
 > Copy this into Claude Code:
 > ```
 > SSH into my VPS "openclaw" and enable hybrid memory search:
-> 1. Edit ~/.openclaw/openclaw.json and add memorySearch config:
+> 1. Check if VOYAGE_API_KEY is set in the environment
+>    (in the systemd service or openclaw.json). If not, ask me for the key.
+> 2. Edit ~/.openclaw/openclaw.json and add memorySearch config:
 >    enabled: true, provider: voyage, sources: ["memory", "sessions"],
 >    indexMode: hot, minScore: 0.3, maxResults: 20
-> 2. Restart the daemon: systemctl --user restart openclaw
-> 3. Verify it restarted: systemctl --user status openclaw
-> 4. Check logs for memory indexing: journalctl --user -u openclaw --no-pager -n 20
+> 3. Restart the daemon: systemctl --user restart openclaw
+> 4. Verify it restarted: systemctl --user status openclaw
+> 5. Check logs for memory indexing: journalctl --user -u openclaw --no-pager -n 20
+>    Look for errors about missing API keys or failed embedding.
 > ```

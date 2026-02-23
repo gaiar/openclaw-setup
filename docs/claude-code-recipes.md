@@ -169,23 +169,7 @@ SSH into my VPS "openclaw" and enable hybrid memory search:
 
 ---
 
-## Phase 9: Backup to R2
-
-```
-SSH into my VPS "openclaw" and set up automated backups:
-1. Install rclone
-2. Configure an R2 remote named "r2" (I'll provide the access keys)
-3. Verify the bucket is accessible: rclone lsd r2:
-4. Set up a cron job to sync every 6 hours:
-   rclone sync ~/.openclaw/workspace r2:openclaw-backup-bucket
-   with logging to /tmp/rclone-openclaw.log
-5. Run an initial manual sync to verify it works
-6. Show me the cron entry and sync results
-```
-
----
-
-## Phase 10: Messaging Channels
+## Phase 9: Messaging Channels
 
 ```
 SSH into my VPS "openclaw" and help me connect a messaging channel.
@@ -195,6 +179,24 @@ I want to set up [Telegram / WhatsApp / Discord / Slack].
 3. Restart the daemon: systemctl --user restart openclaw
 4. Verify with: openclaw channels status --probe
 5. Test with: openclaw agent --message "Hello, can you hear me?"
+```
+
+---
+
+## Phase 10: Backup to R2
+
+```
+SSH into my VPS "openclaw" and set up automated backups:
+1. Install rclone
+2. Configure an R2 remote named "r2" (I'll provide the access keys)
+3. Create the R2 bucket if it doesn't exist:
+   rclone mkdir r2:openclaw-backup-bucket
+4. Verify the bucket is accessible: rclone lsd r2:
+5. Set up a cron job to sync every 6 hours:
+   rclone sync ~/.openclaw/workspace r2:openclaw-backup-bucket
+   with logging to /tmp/rclone-openclaw.log
+6. Run an initial manual sync to verify it works
+7. Show me the cron entry and sync results
 ```
 
 ---
@@ -247,19 +249,23 @@ SSH into "openclaw" and deploy OpenClaw with Cloudflare Zero Trust:
 
 1. System hardening (updates, UFW firewall — deny all incoming,
    allow SSH only)
-2. Runtime dependencies (build-essential, libopus-dev, Node.js 22
+2. SSH hardening (disable password auth, PermitRootLogin
+   prohibit-password, install fail2ban with sshd jail)
+3. Runtime dependencies (build-essential, libopus-dev, Node.js 22
    via NVM, cloudflared)
-3. OpenClaw installation (npm install -g openclaw@latest,
+4. OpenClaw installation (npm install -g openclaw@latest,
    onboard wizard with daemon, bind 127.0.0.1 port 18789)
-4. Cloudflare Tunnel (create, configure ingress, route DNS,
+5. Cloudflare Tunnel (create, configure ingress, route DNS,
    install as systemd service)
-5. Zero Trust Access (Access applications for gateway and SSH,
+6. Zero Trust Access (Access applications for gateway and SSH,
    Allow policies for my email)
-6. Agent identity (SOUL.md, USER.md, MEMORY.md, HEARTBEAT.md)
-7. Hybrid memory search (Voyage provider, minScore 0.3)
-8. R2 backup (rclone cron every 6 hours)
-9. Security hardening (protection skills, file permissions,
-   full verification checklist)
+7. Agent identity (SOUL.md, USER.md, MEMORY.md, HEARTBEAT.md)
+8. Hybrid memory search (Voyage provider, minScore 0.3)
+9. Messaging channels (connect Telegram / WhatsApp / Discord /
+   Slack — I'll specify which ones)
+10. R2 backup (rclone cron every 6 hours)
+11. Security hardening (protection skills, file permissions,
+    full verification checklist)
 
 CRITICAL: Gateway must bind to 127.0.0.1 only. Never 0.0.0.0.
 Never open port 18789 in the firewall.

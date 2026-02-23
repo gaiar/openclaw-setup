@@ -94,16 +94,24 @@ This file controls the LLM provider, memory search settings, gateway port and bi
 {: .note-title }
 > **Claude Code Prompt**
 >
-> Copy this into Claude Code:
+> The onboarding wizard is interactive — run it yourself in your own
+> SSH session, then use Claude Code to verify the result.
+>
+> **You run** (in your own terminal):
+> ```bash
+> ssh openclaw
+> npm install -g openclaw@latest
+> openclaw onboard --install-daemon
 > ```
-> SSH into my VPS "openclaw" and install OpenClaw:
-> 1. Run: npm install -g openclaw@latest
-> 2. Run the onboarding wizard: openclaw onboard --install-daemon
->    Use these settings:
->    - Workspace: ~/.openclaw/workspace
->    - LLM provider: Anthropic (Claude Opus 4.6)
->    - Gateway port: 18789
->    - Gateway bind: 127.0.0.1 (CRITICAL: never 0.0.0.0)
->    - Tailscale: Off
-> 3. Verify with: openclaw doctor && openclaw status
+> Use these settings: Workspace `~/.openclaw/workspace`, gateway port `18789`,
+> bind `127.0.0.1` (CRITICAL: never `0.0.0.0`), Tailscale off.
+>
+> Then copy this into Claude Code:
+> ```
+> SSH into my VPS "openclaw" and verify the OpenClaw installation:
+> 1. Run: openclaw doctor
+> 2. Run: openclaw status
+> 3. Confirm the gateway is bound to 127.0.0.1:18789 (not 0.0.0.0)
+> 4. Confirm the systemd user service is enabled and running:
+>    systemctl --user status openclaw
 > ```

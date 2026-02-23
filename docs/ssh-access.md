@@ -134,11 +134,17 @@ When you run `ssh user@ssh.YOURDOMAIN.COM`, `cloudflared` requests a short-lived
 > Copy this into Claude Code:
 > ```
 > Set up SSH via Cloudflare Zero Trust for my VPS "openclaw":
-> 1. On my local machine, add to ~/.ssh/config:
+> 1. Check if cloudflared is installed locally (cloudflared --version).
+>    If not, install it (brew install cloudflared on macOS,
+>    or download the .deb from GitHub releases for Linux).
+> 2. On my local machine, add to ~/.ssh/config:
 >    Host ssh.YOURDOMAIN.COM
 >      ProxyCommand cloudflared access ssh --hostname %h
-> 2. SSH into my VPS "openclaw" and verify the tunnel config
+> 3. SSH into my VPS "openclaw" and verify the tunnel config
 >    has the ssh.YOURDOMAIN.COM ingress rule pointing to
 >    ssh://localhost:22
-> 3. Test the connection: ssh user@ssh.YOURDOMAIN.COM
+> 4. Print the command I should test manually:
+>    ssh deploy@ssh.YOURDOMAIN.COM
+>    (This opens a browser for Cloudflare Access auth —
+>    I will run it myself outside Claude Code.)
 > ```

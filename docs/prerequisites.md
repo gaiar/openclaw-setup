@@ -83,11 +83,14 @@ The gateway binds exclusively to `127.0.0.1:18789` and is never directly reachab
 > Copy this into Claude Code:
 > ```
 > I'm preparing to deploy OpenClaw on a VPS. Help me verify
-> I have everything ready:
-> 1. Check if I can SSH into my VPS: ssh openclaw
-> 2. Verify the OS: cat /etc/os-release (should be Ubuntu 24.04)
-> 3. Check resources: free -h and nproc (need 2+ vCPU, 2+ GB RAM)
-> 4. Confirm I have a Cloudflare API token ready
-> 5. Confirm I have an LLM API key (Anthropic recommended)
-> Report what's ready and what's missing.
+> my local machine is ready:
+> 1. Check that ssh is available locally: ssh -V
+> 2. Check that I have a working terminal and shell
+> 3. Ask me to confirm I have each of the following:
+>    - A VPS provider account (Hetzner or DigitalOcean)
+>    - A domain name registered with any registrar
+>    - A Cloudflare account (free tier is fine)
+>    - An LLM API key (Anthropic recommended)
+> Report what's ready and what I still need to arrange
+> before we start.
 > ```

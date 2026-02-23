@@ -331,8 +331,8 @@ Only then disable password auth and reload SSH.
 >
 > Copy this into Claude Code:
 > ```
-> Harden SSH on my VPS at YOUR_VPS_IP:
-> 1. Check if my SSH key is already in authorized_keys
+> Harden SSH on my VPS (ssh deploy@YOUR_VPS_IP):
+> 1. Check if my SSH key is already in authorized_keys for the deploy user
 > 2. Test that key-based login works
 > 3. Disable password authentication in sshd_config
 >    (PasswordAuthentication no, ChallengeResponseAuthentication no,

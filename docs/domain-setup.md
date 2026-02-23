@@ -98,10 +98,11 @@ An API token allows automation tools (including `cloudflared` and scripts) to ma
 > Help me set up Cloudflare for my domain YOURDOMAIN.COM:
 > 1. Verify the domain is added and active in Cloudflare
 >    (use: curl to the Cloudflare API or guide me through the dashboard)
-> 2. Create an API token with permissions for Tunnel (Read),
+> 2. Walk me through creating an API token in the Cloudflare
+>    dashboard with permissions for Tunnel (Read),
 >    Access Apps & Policies (Edit), DNS (Edit), Zone (Read)
-> 3. Save the token — I'll need it when setting up the tunnel
->    on my VPS "openclaw"
+> 3. Save the token securely — I'll need it in a later step
+>    when setting up the Cloudflare Tunnel
 > ```
 
 ---

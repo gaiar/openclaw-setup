@@ -222,7 +222,7 @@ To test full authentication, open `https://openclaw.YOURDOMAIN.COM` in a browser
 >
 > 1. Create Access app "OpenClaw AI Gateway" on openclaw.YOURDOMAIN.COM
 > 2. Create Allow policy restricted to my email
-> 3. Create Access app "SSH Access" on ssh.YOURDOMAIN.COM
+> 3. Create Access app "OpenClaw SSH" on ssh.YOURDOMAIN.COM
 > 4. Create Allow policy restricted to my email
 > 5. Verify both with: curl -I https://openclaw.YOURDOMAIN.COM
 >    (should return 302 redirect to Cloudflare login)
