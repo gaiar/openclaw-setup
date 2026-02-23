@@ -51,16 +51,16 @@ This guide walks you through deploying OpenClaw on a fresh Ubuntu 24.04 VPS with
 The full deployment follows these ten steps in order:
 
 ```mermaid
-flowchart LR
-    A["1. VPS\nProvisioning"] --> B["2. Firewall\n(UFW)"]
-    B --> C["3. Node.js +\nDependencies"]
-    C --> D["4. Install\nOpenClaw"]
-    D --> E["5. Cloudflare\nTunnel"]
-    E --> F["6. Zero Trust\nAccess"]
-    F --> G["7. Agent\nIdentity"]
-    G --> H["8. Memory\nSearch"]
-    H --> I["9. Backup\n(R2)"]
-    I --> J["10. Channels\n& Testing"]
+flowchart TD
+    A["1. VPS Provisioning"] --> B["2. Firewall (UFW)"]
+    B --> C["3. Node.js + Dependencies"]
+    C --> D["4. Install OpenClaw"]
+    D --> E["5. Cloudflare Tunnel"]
+    E --> F["6. Zero Trust Access"]
+    F --> G["7. Agent Identity"]
+    G --> H["8. Memory Search"]
+    H --> I["9. Backup (R2)"]
+    I --> J["10. Channels & Testing"]
 
     style A fill:#60a5fa,stroke:#93c5fd,color:#000
     style B fill:#60a5fa,stroke:#93c5fd,color:#000
