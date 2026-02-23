@@ -62,16 +62,16 @@ flowchart LR
     H --> I["9. Backup\n(R2)"]
     I --> J["10. Channels\n& Testing"]
 
-    style A fill:#2563eb,stroke:#1e40af,color:#fff
-    style B fill:#2563eb,stroke:#1e40af,color:#fff
-    style C fill:#2563eb,stroke:#1e40af,color:#fff
-    style D fill:#2563eb,stroke:#1e40af,color:#fff
-    style E fill:#f97316,stroke:#c2410c,color:#fff
-    style F fill:#f97316,stroke:#c2410c,color:#fff
-    style G fill:#16a34a,stroke:#15803d,color:#fff
-    style H fill:#16a34a,stroke:#15803d,color:#fff
-    style I fill:#16a34a,stroke:#15803d,color:#fff
-    style J fill:#16a34a,stroke:#15803d,color:#fff
+    style A fill:#60a5fa,stroke:#93c5fd,color:#000
+    style B fill:#60a5fa,stroke:#93c5fd,color:#000
+    style C fill:#60a5fa,stroke:#93c5fd,color:#000
+    style D fill:#60a5fa,stroke:#93c5fd,color:#000
+    style E fill:#fb923c,stroke:#fdba74,color:#000
+    style F fill:#fb923c,stroke:#fdba74,color:#000
+    style G fill:#4ade80,stroke:#86efac,color:#000
+    style H fill:#4ade80,stroke:#86efac,color:#000
+    style I fill:#4ade80,stroke:#86efac,color:#000
+    style J fill:#4ade80,stroke:#86efac,color:#000
 ```
 
 **Color key:** Blue = VPS foundation | Orange = Cloudflare security | Green = Agent configuration
