@@ -184,10 +184,17 @@ Before starting, make sure you have:
 > Copy this into Claude Code to get started:
 > ```
 > I want to deploy OpenClaw on a fresh Ubuntu 24.04 VPS with
-> Cloudflare Zero Trust security. My VPS is accessible via
-> SSH as "openclaw" (configured in ~/.ssh/config).
-> SSH into "openclaw" and walk me through the full setup
-> starting from system hardening through to channel testing.
+> Cloudflare Zero Trust security. I'm starting from scratch.
+> Guide me step by step through the entire process:
+> 1. Choosing and provisioning a VPS (Hetzner or DigitalOcean)
+> 2. Setting up a domain with Cloudflare DNS
+> 3. Hardening the server (firewall, SSH keys, fail2ban)
+> 4. Installing Node.js and OpenClaw
+> 5. Creating a Cloudflare Tunnel and Zero Trust Access policy
+> 6. Configuring the agent identity and memory
+> 7. Connecting messaging channels and testing
+> Ask me questions as we go — I'll provide credentials and
+> make choices when needed.
 > ```
 
 ---
