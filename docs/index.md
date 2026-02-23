@@ -62,16 +62,16 @@ flowchart TD
     H --> I["9. Backup (R2)"]
     I --> J["10. Channels & Testing"]
 
-    style A fill:#60a5fa,stroke:#93c5fd,color:#000
-    style B fill:#60a5fa,stroke:#93c5fd,color:#000
-    style C fill:#60a5fa,stroke:#93c5fd,color:#000
-    style D fill:#60a5fa,stroke:#93c5fd,color:#000
-    style E fill:#fb923c,stroke:#fdba74,color:#000
-    style F fill:#fb923c,stroke:#fdba74,color:#000
-    style G fill:#4ade80,stroke:#86efac,color:#000
-    style H fill:#4ade80,stroke:#86efac,color:#000
-    style I fill:#4ade80,stroke:#86efac,color:#000
-    style J fill:#4ade80,stroke:#86efac,color:#000
+    style A fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
+    style B fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
+    style C fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
+    style D fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
+    style E fill:#ffedd5,stroke:#ea580c,color:#7c2d12
+    style F fill:#ffedd5,stroke:#ea580c,color:#7c2d12
+    style G fill:#dcfce7,stroke:#16a34a,color:#14532d
+    style H fill:#dcfce7,stroke:#16a34a,color:#14532d
+    style I fill:#dcfce7,stroke:#16a34a,color:#14532d
+    style J fill:#dcfce7,stroke:#16a34a,color:#14532d
 ```
 
 **Color key:** Blue = VPS foundation | Orange = Cloudflare security | Green = Agent configuration
