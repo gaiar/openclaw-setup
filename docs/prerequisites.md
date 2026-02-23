@@ -29,7 +29,7 @@ Before you begin, make sure you have the following:
 
 - [ ] **Cloudflare account** -- The [free tier](https://www.cloudflare.com/plans/) is sufficient. You will use Cloudflare Tunnel and Cloudflare Access to secure the gateway behind Zero Trust, with no inbound ports exposed on your VPS.
 
-- [ ] **LLM API key** -- Anthropic is recommended for Claude Opus 4.6, which is the most capable model for agentic workflows. OpenClaw also supports OpenAI, DeepSeek, Gemini, and OpenRouter if you prefer a different provider.
+- [ ] **LLM API key** -- Anthropic is recommended for Claude Opus 4.6, which is the most capable model for agentic workflows. Alternatively, an **Anthropic Max** subscription includes API access and Claude Code. OpenClaw also supports OpenAI, DeepSeek, Gemini, and OpenRouter if you prefer a different provider.
 
 - [ ] **SSH client on your local machine** -- You need to be able to SSH into your VPS. macOS and Linux ship with `ssh` built in. On Windows, use Windows Terminal with OpenSSH, PuTTY, or WSL.
 
@@ -45,6 +45,7 @@ Before you begin, make sure you have the following:
 | Domain name | ~$10/year | Varies by TLD and registrar |
 | Cloudflare (Tunnel + Access) | Free | Free tier covers everything in this guide |
 | LLM API (Anthropic, OpenAI, etc.) | Pay-per-use | Depends on usage; expect $5--$50/month for moderate use |
+| Anthropic Max (alternative) | $100--$200/month | Includes API access and Claude Code; replaces separate API key |
 
 **Total fixed cost**: roughly **$6/month** (VPS + amortized domain).
 

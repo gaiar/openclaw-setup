@@ -170,7 +170,7 @@ Before starting, make sure you have:
 - A **VPS** with Ubuntu 24.04 LTS (Hetzner, DigitalOcean, or similar; 4 vCPU / 8 GB RAM recommended)
 - A **domain name** with DNS managed by Cloudflare (e.g., `YOURDOMAIN.COM`)
 - A **Cloudflare account** (free tier is sufficient for Tunnels and Access)
-- An **API key** for at least one LLM provider (Anthropic, OpenAI, etc.)
+- An **API key** for at least one LLM provider (Anthropic, OpenAI, etc.), or an **Anthropic Max** subscription
 - **SSH access** to your VPS
 
 ---
