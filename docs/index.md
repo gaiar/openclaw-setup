@@ -48,24 +48,25 @@ This guide walks you through deploying OpenClaw on a fresh Ubuntu 24.04 VPS with
 
 ## Deployment Pipeline
 
-The full deployment follows these ten steps in order:
+The full deployment follows these eleven steps in order:
 
 ```mermaid
 flowchart TD
     subgraph foundation["VPS Foundation"]
         A["1. VPS Provisioning"] --> B["2. Firewall · UFW"]
-        B --> C["3. Node.js + Deps"]
-        C --> D["4. Install OpenClaw"]
+        B --> B2["3. SSH Key Auth"]
+        B2 --> C["4. Node.js + Deps"]
+        C --> D["5. Install OpenClaw"]
     end
 
     subgraph security["Cloudflare Security"]
-        E["5. Cloudflare Tunnel"] --> F["6. Zero Trust Access"]
+        E["6. Cloudflare Tunnel"] --> F["7. Zero Trust Access"]
     end
 
     subgraph config["Agent Configuration"]
-        G["7. Agent Identity"] --> H["8. Memory Search"]
-        H --> I["9. Backup · R2"]
-        I --> J["10. Channels + Testing"]
+        G["8. Agent Identity"] --> H["9. Memory Search"]
+        H --> I["10. Backup · R2"]
+        I --> J["11. Channels + Testing"]
     end
 
     D --> E
@@ -73,6 +74,7 @@ flowchart TD
 
     style A fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
     style B fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
+    style B2 fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
     style C fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
     style D fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
     style E fill:#ffedd5,stroke:#ea580c,color:#7c2d12
@@ -97,15 +99,16 @@ Follow the pages in order for a complete deployment:
 | Step | Page | What You Do |
 |:-----|:-----|:------------|
 | 1 | [VPS Provisioning](vps-provisioning.md) | Spin up Ubuntu 24.04 VPS, create non-root user, configure UFW firewall |
-| 2 | [Runtime Dependencies](runtime-deps.md) | Install build tools, Node.js 22 via NVM, and `cloudflared` |
-| 3 | [Install OpenClaw](install-openclaw.md) | `npm install -g openclaw@latest && openclaw onboard --install-daemon` |
-| 4 | [Cloudflare Tunnel](cloudflare-tunnel.md) | Create a tunnel routing `openclaw.YOURDOMAIN.COM` to `localhost:18789` |
-| 5 | [Zero Trust Access](zero-trust-access.md) | Create a Cloudflare Access application with email-based Allow policy |
-| 6 | [SSH via Zero Trust](ssh-access.md) | Configure SSH access through the tunnel (3 options) |
-| 7 | [Agent Identity](agent-identity.md) | Write `SOUL.md`, `USER.md`, `MEMORY.md`, and `HEARTBEAT.md` |
-| 8 | [Memory Search](memory-search.md) | Enable hybrid semantic + lexical search in `openclaw.json` |
-| 9 | [Backup to R2](backup-recovery.md) | Configure `rclone` to sync workspace to Cloudflare R2 every 6 hours |
-| 10 | [Channels & Testing](messaging-channels.md) | Connect messaging channels, test pairing mode, verify end-to-end |
+| 2 | [SSH Key Authentication](ssh-keys.md) | Set up key-only SSH access, disable password auth, install fail2ban |
+| 3 | [Runtime Dependencies](runtime-deps.md) | Install build tools, Node.js 22 via NVM, and `cloudflared` |
+| 4 | [Install OpenClaw](install-openclaw.md) | `npm install -g openclaw@latest && openclaw onboard --install-daemon` |
+| 5 | [Cloudflare Tunnel](cloudflare-tunnel.md) | Create a tunnel routing `openclaw.YOURDOMAIN.COM` to `localhost:18789` |
+| 6 | [Zero Trust Access](zero-trust-access.md) | Create a Cloudflare Access application with email-based Allow policy |
+| 7 | [SSH via Zero Trust](ssh-access.md) | Configure SSH access through the tunnel (3 options) |
+| 8 | [Agent Identity](agent-identity.md) | Write `SOUL.md`, `USER.md`, `MEMORY.md`, and `HEARTBEAT.md` |
+| 9 | [Memory Search](memory-search.md) | Enable hybrid semantic + lexical search in `openclaw.json` |
+| 10 | [Backup to R2](backup-recovery.md) | Configure `rclone` to sync workspace to Cloudflare R2 every 6 hours |
+| 11 | [Channels & Testing](messaging-channels.md) | Connect messaging channels, test pairing mode, verify end-to-end |
 
 ---
 
