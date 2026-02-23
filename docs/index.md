@@ -99,32 +99,33 @@ Follow the pages in order for a complete deployment:
 
 ## Architecture at a Glance
 
-Once deployed, your setup looks like this:
+Once deployed, your setup has two traffic paths — **all outbound from the VPS**:
 
 ```
-Users (WhatsApp / Telegram / Slack / Discord / Signal / ...)
-                        |
-                        v
-            Cloudflare Access (JWT)
-                        |
-                        v
-            Cloudflare Tunnel (encrypted, outbound-only)
-                        |
-                        v
-         +---------------------------------+
-         |  Your VPS (Ubuntu 24.04)        |
-         |                                 |
-         |   UFW: deny all inbound         |
-         |   except SSH (port 22)          |
-         |                                 |
-         |   OpenClaw Gateway              |
-         |   ws://127.0.0.1:18789          |
-         |   (systemd managed)             |
-         +---------------------------------+
+CLI / WebChat UI / Mobile Apps            Messaging Platforms
+        |                              (Telegram, WhatsApp, Slack,
+        v                               Discord, Signal, etc.)
+  Cloudflare Access (JWT)                       ^
+        |                                       |
+        v                              outbound polling /
+  Cloudflare Tunnel                    long-lived connections
+  (encrypted, outbound-only)                    |
+        |                                       |
+        v                                       |
+  +---------------------------------------------------+
+  |  Your VPS (Ubuntu 24.04)                           |
+  |                                                    |
+  |   UFW: deny all inbound except SSH (port 22)       |
+  |                                                    |
+  |   OpenClaw Gateway · ws://127.0.0.1:18789          |
+  |   (systemd managed)                                |
+  +---------------------------------------------------+
                         |
                         v
             LLM APIs (Anthropic, OpenAI, etc.)
 ```
+
+**No inbound ports are open for messaging.** The gateway polls channel APIs outbound (Telegram long-polling, WhatsApp persistent WebSocket, etc.). Only control plane clients use the Cloudflare Tunnel path.
 
 ---
 

@@ -25,7 +25,7 @@ This page describes the high-level architecture, the core subsystems, and how th
 
 ```mermaid
 graph TB
-    subgraph Channels["Messaging Channels"]
+    subgraph Channels["Messaging Platforms (external)"]
         WA["WhatsApp<br/>(Baileys)"]
         TG["Telegram<br/>(grammY)"]
         SL["Slack<br/>(@slack/bolt)"]
@@ -33,10 +33,9 @@ graph TB
         SG["Signal<br/>(signal-cli)"]
         IM["iMessage<br/>(BlueBubbles)"]
         GC["Google Chat<br/>(Chat API)"]
-        WC["WebChat<br/>(Built-in)"]
     end
 
-    subgraph Gateway["Gateway Subsystems"]
+    subgraph Gateway["Gateway (VPS · 127.0.0.1:18789)"]
         CA["Channel Adapters"]
         SM["Session Manager"]
         Q["Queue"]
@@ -57,20 +56,24 @@ graph TB
         EMB["Embeddings<br/>(Voyage / OpenAI /<br/>Ollama)"]
     end
 
-    subgraph ControlPlane["Control Plane<br/>WebSocket RPC + HTTP<br/>ws://127.0.0.1:18789"]
+    subgraph ZeroTrust["Cloudflare Zero Trust"]
+        ACCESS["Cloudflare Access<br/>(JWT validation)"]
+        TUNNEL["Cloudflare Tunnel<br/>(encrypted)"]
+    end
+
+    subgraph Clients["Control Plane Clients"]
         CLI["CLI<br/>(openclaw ...)"]
         WCUI["WebChat UI"]
         APPS["macOS / iOS /<br/>Android Apps"]
     end
 
-    WA --> CA
-    TG --> CA
-    SL --> CA
-    DC --> CA
-    SG --> CA
-    IM --> CA
-    GC --> CA
-    WC --> CA
+    CA <-->|"outbound polling /<br/>long-lived connections"| WA
+    CA <-->|"outbound polling"| TG
+    CA <-->|"WebSocket (outbound)"| SL
+    CA <-->|"WebSocket (outbound)"| DC
+    CA <-->|"outbound polling"| SG
+    CA <-->|"outbound polling"| IM
+    CA <-->|"outbound polling"| GC
 
     CA --> SM
     SM --> Q
@@ -86,11 +89,12 @@ graph TB
     AR -->|"vector search"| SQ
     SQ -->|"encode/decode"| EMB
 
-    AR <-->|"RPC"| ControlPlane
-    CLI <-->|"ws://127.0.0.1:18789"| AR
-    WCUI <-->|"ws://127.0.0.1:18789"| AR
-    APPS <-->|"ws://127.0.0.1:18789"| AR
+    Clients -->|"HTTPS"| ACCESS
+    ACCESS -->|"authenticated"| TUNNEL
+    TUNNEL -->|"ws://127.0.0.1:18789"| AR
 ```
+
+**Key distinction:** Messaging channels are reached via **outbound connections** from the gateway (polling, long-lived WebSockets). No inbound ports are needed for channels. Only control plane clients (CLI, WebChat UI, mobile apps) reach the gateway through the Cloudflare Tunnel + Access path.
 
 ---
 
@@ -98,14 +102,18 @@ graph TB
 
 ### 1. Channel Adapters
 
-Channel adapters are the outermost layer of the gateway. Each supported messaging platform has a dedicated adapter that handles the protocol-specific details of receiving and sending messages.
+Channel adapters are the outermost layer of the gateway. Each supported messaging platform has a dedicated adapter that **initiates outbound connections** to the platform's API to poll for or receive messages. No inbound ports are needed for messaging — the gateway reaches out, not the other way around.
 
 **Responsibilities:**
 
-- Normalize incoming messages from all platforms (WhatsApp, Telegram, Slack, Discord, Signal, iMessage, Google Chat, WebChat) into a **unified internal format**
+- **Poll or maintain outbound connections** to each platform's API (e.g., Telegram long-polling via grammY, WhatsApp persistent WebSocket via Baileys, Slack/Discord outbound WebSockets)
+- Normalize incoming messages from all platforms into a **unified internal format**
 - Serialize model output back into **platform-native format** for delivery (e.g., Telegram Markdown, Slack Block Kit, Discord embeds)
 - Handle platform-specific media types (images, voice notes, documents, stickers)
 - Manage connection lifecycle, reconnection, and authentication for each platform
+
+{: .note }
+> Webhooks (inbound HTTP callbacks) are **not used** because they would require exposing a port to the internet, breaking the Zero Trust model. All channel communication is outbound from the gateway.
 
 Each adapter abstracts away the underlying library (Baileys for WhatsApp, grammY for Telegram, @slack/bolt for Slack, etc.) so that the rest of the system operates on a single, consistent message schema.
 
@@ -180,9 +188,9 @@ The **heartbeat scheduler** runs alongside the agent runtime as a periodic auton
 
 The gateway is the backbone of OpenClaw. It runs as a **systemd user service** on Linux (or launchd on macOS), ensuring automatic startup and restart on failure.
 
-When a message arrives from any channel:
+When a channel adapter picks up a new message (via outbound polling or a long-lived connection):
 
-1. The **channel adapter** receives the raw platform message and normalizes it into the internal format
+1. The **channel adapter** normalizes the raw platform message into the internal format
 2. The **session manager** looks up or creates a session for the sender, loading relevant context
 3. The **queue** checks whether the agent runtime is busy:
    - If idle, the message is forwarded immediately to the agent runtime
@@ -191,19 +199,20 @@ When a message arrives from any channel:
 5. If the LLM response contains tool calls, the runtime executes them and loops back to step 4
 6. Once the LLM produces a final text response, it is routed back through the channel adapter and delivered in the platform-native format
 
-All of this happens behind `ws://127.0.0.1:18789`. External clients (CLI, WebChat, mobile apps) connect to this same endpoint via Cloudflare Tunnel at `openclaw.YOURDOMAIN.COM`.
+All of this happens internally on the VPS. Messaging channels never connect inbound — the gateway polls outbound. Only control plane clients (CLI, WebChat, mobile apps) reach the gateway via Cloudflare Tunnel at `openclaw.YOURDOMAIN.COM`.
 
 ```
-User sends WhatsApp message
-  -> Baileys adapter normalizes it
-    -> Session Manager resolves sender identity
-      -> Queue forwards to Agent Runtime
-        -> Agent Runtime assembles context
-          -> LLM API call (e.g., Anthropic Claude Opus 4.6)
-            -> Tool execution (if needed)
-              -> Final response
-                -> Channel Adapter formats for WhatsApp
-                  -> Message delivered to user
+Baileys adapter polls WhatsApp servers (outbound)
+  -> New message detected
+    -> Adapter normalizes into internal format
+      -> Session Manager resolves sender identity
+        -> Queue forwards to Agent Runtime
+          -> Agent Runtime assembles context
+            -> LLM API call (outbound to Anthropic / OpenAI / etc.)
+              -> Tool execution (if needed)
+                -> Final response
+                  -> Channel Adapter formats for WhatsApp
+                    -> Adapter sends reply via WhatsApp API (outbound)
 ```
 
 ---
